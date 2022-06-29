@@ -7,7 +7,7 @@ module.exports =
     new PipeEmitter(pipeName, false, true)
 
   connect: (pipeName) ->
-    new PipeEmitter(pipeName, true, true)
+    new PipeEmitter(pipeName, false, true)
 
 class PipeEmitter extends EventEmitter
   clients: {}
@@ -46,16 +46,14 @@ class PipeEmitter extends EventEmitter
     else
       @emit.apply this, obj.arguments
 
-  send: (event, args...) ->
-    obj = {
-      event: event
-      arguments: args
-    }
+  send: (event, data, allowSubKey = false) ->
+    obj = data
 
-    obj.subKey = @subKey if @subKey
+    obj.event = event if event
+    obj.subKey = @subKey if (allowSubKey && @subKey)
     
     pipe = net.connect(@pipeAddress)
-    pipe.write(JSON.stringify(obj))
+    pipe.write('RIG,' + JSON.stringify(obj));
     pipe.end()
 
   handleMessageFromClient: (obj) ->
