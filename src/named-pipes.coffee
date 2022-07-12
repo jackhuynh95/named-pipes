@@ -7,7 +7,7 @@ module.exports =
     new PipeEmitter(pipeName, false, true)
 
   connect: (pipeName) ->
-    new PipeEmitter(pipeName, false, true)
+    new PipeEmitter(pipeName, false, false)
 
 class PipeEmitter extends EventEmitter
   clients: {}
