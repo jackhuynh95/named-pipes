@@ -15,7 +15,12 @@ class PipeEmitter extends EventEmitter
   constructor: (@pipeName, @listenOnSub, @listen) ->
     super
 
-    @pipeAddress = "\\\\.\\pipe\\#{@pipeName}"
+    pipePrefix = "\\\\.\\pipe\\"
+
+    if (@pipeName.includes(pipePrefix)) 
+      @pipeAddress = "#{@pipeName}"
+    else 
+      @pipeAddress = "#{pipePrefix}#{@pipeName}"
 
     if @listenOnSub
       hash = crypto.createHash('sha1')
