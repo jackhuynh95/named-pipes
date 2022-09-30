@@ -23,7 +23,7 @@ const send = async (data = null, prefix = false) => {
 
 const main = async () => {
 	// pipe name with no prefix and empty data
-	send(null, false);
+	send({}, false);
 
 	// pipe name with no prefix
 	setTimeout(() =>

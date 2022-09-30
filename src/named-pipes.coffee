@@ -51,7 +51,7 @@ class PipeEmitter extends EventEmitter
 		else
 			@emit.apply this, obj.arguments
 
-	send: (event, data = null, allowSubKey = false) ->
+	send: (event, data = {}, allowSubKey = false) ->
 		new Promise (resolve, reject) =>
 			obj = data
 
@@ -59,7 +59,7 @@ class PipeEmitter extends EventEmitter
 			obj.subKey = @subKey if (allowSubKey && @subKey)
 
 			pipe = net.connect(@pipeAddress, () -> resolve("connected")).on('error', (err) -> reject(err) )
-			pipe.write('RIG,' + JSON.stringify(obj)) if !!obj
+			pipe.write('RIG,' + JSON.stringify(obj)) if obj && Object.keys(obj).length > 0
 			pipe.end()
 
 	handleMessageFromClient: (obj) ->
