@@ -2,40 +2,43 @@ var NamedPipes = require("../lib/named-pipes.js");
 var PipeNameWithNoPrefix = "my_pipe_name";
 var PipeNameWithPrefix = "\\\\.\\pipe\\my_pipe_name";
 
-// pipe name with no prefix
-try {
-  let pipe = NamedPipes.connect(PipeNameWithNoPrefix);
+const send = async (data = null, prefix = false) => {
+	try {
+		let address = prefix ? PipeNameWithPrefix : PipeNameWithNoPrefix;
+		let pipe = NamedPipes.connect(address);
 
-  pipe.send(
-    "",
-    {
-      Url: "http://localhost:51549/addStatus",
-      Event: "CONNECT_APP",
-      MessageId: "vc_1",
-    },
-    false
-  );
+		await pipe.send(
+			"",
+			data,
+			false
+		);
 
-  pipe = null;
-} catch (err) {
-  console.log("err", err);
+		console.log("connected", data);
+
+			pipe = null;
+	} catch (err) {
+		console.log("err", err);
+	}
 }
 
-// pipe name with prefix
-// try {
-//   let pipe = NamedPipes.connect(PipeNameWithPrefix);
+const main = async () => {
+	// pipe name with no prefix and empty data
+	send(null, false);
 
-//   pipe.send(
-//     "",
-//     {
-//       Url: "http://localhost:51549/addStatus",
-//       Event: "CONNECT_APP",
-//       MessageId: "vc_2",
-//     },
-//     false
-//   );
+	// pipe name with no prefix
+	setTimeout(() =>
+	send({
+		Url: "http://localhost:51549/addStatus",
+		Event: "CONNECT_APP",
+		MessageId: "vc_1",
+	}, false), 5000);
 
-//   pipe = null;
-// } catch (err) {
-//   console.log("err", err);
-// }
+	// pipe name with prefix
+	setTimeout(() => send({
+	Url: "http://localhost:51549/addStatus",
+	Event: "CONNECT_APP",
+	MessageId: "vc_2",
+	}, true), 10000);
+};
+
+main();
